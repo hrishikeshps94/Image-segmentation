@@ -1,4 +1,7 @@
 /Connected_components_PyTorch
 /old_model
 /run.py
-/__pycache__
+/datasets/__pycache__
+/misc/__pycache__
+/model/__pycache__
+/run_utils/__pycache__
