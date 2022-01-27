@@ -73,7 +73,7 @@ class Run():
             for loss_name,loss_val in final_epoch_stat.items():
                 wandb.log({loss_name:loss_val})
                 wandb.log({'learningrate':self.optimizer.param_groups[0]['lr']})
-            print(final_epoch_stat)
+            print(f' Epoch {epoch} losses = {final_epoch_stat}')
             for batch_data in tqdm.tqdm(self.val_dataloader):
                 val_result_dict = valid_step(batch_data,self.model,self.run_info["loss"])
             visualise_val = proc_valid_step_output(val_result_dict['raw'],self.run_info['batch_size']['valid'],self.run_info['nr_class'])        
