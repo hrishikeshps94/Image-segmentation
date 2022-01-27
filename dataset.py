@@ -6,7 +6,6 @@ from datasets.train_loader import FileLoader
 from torch.utils.data import DataLoader
 from run_utils.utils import check_manual_seed
 import tqdm,os
-# from config import run_info
 
 
 def worker_init_fn(worker_id):

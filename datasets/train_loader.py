@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import torch.utils.data
 from imgaug import augmenters as iaa

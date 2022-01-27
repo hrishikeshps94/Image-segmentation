@@ -1,6 +1,6 @@
 import numpy as np
 from config import run_info
-from run_utils.utils import get_model_summary,save_checkpoint,load_checkpoint_for_training
+from run_utils.utils import get_model_summary
 from dataset import TrainManager
 import tqdm,torch
 from train import train_step,valid_step
@@ -69,7 +69,7 @@ class Run():
             if final_epoch_stat['overall_loss']<self.lowest_loss:
                 self.save_checkpoint(epoch*count,'best')
 
-            save_checkpoint(epoch*count,'last')         
+            self.save_checkpoint(epoch*count,'last')         
             for loss_name,loss_val in final_epoch_stat.items():
                 wandb.log({loss_name:loss_val})
                 wandb.log({'learningrate':self.optimizer.param_groups[0]['lr']})

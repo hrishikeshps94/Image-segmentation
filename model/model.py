@@ -1,11 +1,10 @@
 from collections import OrderedDict
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from model.model_utils  import crop_op,Net,UpSample2x,ConvNeXt,crop_to_shape,DenseBlock,TFSamepaddingLayer
-import sys
-sys.path.append('/media/hrishi/data/WORK/RESEARCH/2022/ISBI-2022/code/hover_net_custom')
-from run_utils.utils import get_model_summary
+# import sys
+# sys.path.append('/media/hrishi/data/WORK/RESEARCH/2022/ISBI-2022/code/hover_net_custom')
+# from run_utils.utils import get_model_summary
 
 
 ####

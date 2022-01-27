@@ -198,15 +198,3 @@ def get_model_summary(
     summary_str += "Estimated Total Size (MB): %0.2f" % total_size + "\n"
     summary_str += "".join("-" for _ in range(len(header_line))) + "\n"
     return summary_str
-
-def save_checkpoint(checkpoint_folder,global_step,generator,optimizer,type='last'):
-    checkpoint_folder = checkpoint_folder
-    if not os.path.exists(checkpoint_folder):
-        os.makedirs(checkpoint_folder)
-    checkpoint_filename = os.path.join(checkpoint_folder, f'{type}.pth')
-    save_data = {
-        'step': global_step,
-        'generator_state_dict': generator.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-    }
-    torch.save(save_data, checkpoint_filename)

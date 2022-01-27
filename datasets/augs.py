@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 from scipy.ndimage import measurements
-import cc_torch
-import torch
 
 ####
 def fix_mirror_padding(ann):
@@ -16,7 +14,6 @@ def fix_mirror_padding(ann):
     for inst_id in inst_list:
         inst_map = np.array(ann == inst_id, np.uint8)
         remapped_ids,num_feat = measurements.label(inst_map)
-        # remapped_ids = cc_torch.connected_components_labeling(torch.from_numpy(inst_map).to('cuda')).to('cpu').numpy()
         remapped_ids[remapped_ids > 1] += current_max_id
         ann[remapped_ids > 1] = remapped_ids[remapped_ids > 1]
         current_max_id = np.amax(ann)
