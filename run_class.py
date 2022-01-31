@@ -34,6 +34,7 @@ class Run():
         checkpoint_filename = os.path.join(self.run_info['save_path'], 'last.pth')
         if not os.path.exists(checkpoint_filename):
             print("Couldn't find checkpoint file. Starting training from the beginning.")
+            self.model.to(device)
             return
         data = torch.load(checkpoint_filename)
         self.model.load_state_dict(data['generator_state_dict'])
@@ -62,20 +63,27 @@ class Run():
     def train(self):
         for epoch in range(self.curent_epoch,self.run_info['nr_epochs']):
             epoch_stat = {"EMA": {}}
+            val_epoch_stat = {"Scalar": {}}
             for count,batch_data in tqdm.tqdm(enumerate(self.train_dataloader)):
                 step_stat = train_step(batch_data,self.model,self.optimizer,self.lr_scheduler,self.run_info["loss"])
                 epoch_stat['EMA'] = dict(Counter(epoch_stat['EMA'])+Counter(step_stat['EMA']))
             final_epoch_stat = {k:v/count+1 for k,v in epoch_stat['EMA'].items()}
-            if final_epoch_stat['overall_loss']<self.lowest_loss:
-                self.save_checkpoint(epoch*count,'best')
+            # if final_epoch_stat['overall_loss']<self.lowest_loss:
+            #     self.save_checkpoint(epoch*count,'train_best')
 
             self.save_checkpoint(epoch*count,'last')         
             for loss_name,loss_val in final_epoch_stat.items():
-                wandb.log({loss_name:loss_val})
+                wandb.log({'train_'+loss_name:loss_val})
                 wandb.log({'learningrate':self.optimizer.param_groups[0]['lr']})
             print(f' Epoch {epoch} losses = {final_epoch_stat}')
-            for batch_data in tqdm.tqdm(self.val_dataloader):
+            for val_count,batch_data in tqdm.tqdm(enumerate(self.val_dataloader)):
                 val_result_dict = valid_step(batch_data,self.model,self.run_info["loss"])
+                val_epoch_stat['Scalar'] = dict(Counter(val_epoch_stat['Scalar'])+Counter(val_result_dict['Scalar']))
+            final_val_epoch_stat = {k:v/val_count+1 for k,v in val_epoch_stat['Scalar'].items()}
+            if final_val_epoch_stat['overall_loss']<self.lowest_loss:
+                self.save_checkpoint(epoch*count,'best')
+            for loss_name,loss_val in final_val_epoch_stat.items():
+                wandb.log({'val_'+loss_name:loss_val})
             visualise_val = proc_valid_step_output(val_result_dict['raw'],self.run_info['batch_size']['valid'],self.run_info['nr_class'])        
             for val_image_name,val_image in visualise_val['image'].items():
                 wandb.log({val_image_name:wandb.Image(val_image)})
