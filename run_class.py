@@ -13,11 +13,12 @@ class Run():
     def __init__(self,run_info):
         self.run_info = run_info
         self.model = run_info['net']()
+        print(get_model_summary(self.model, (3, 256, 256), device='cpu'))
         self.optimizer = self.run_info["optimizer"](params = self.model.parameters(),lr=1.0e-4)
+        self.curent_epoch = 0
         self.load_dataset()
         self.restore_model()
         self.lr_scheduler = self.run_info['lr_scheduler'](self.optimizer)
-        print(get_model_summary(self.model, (3, 256, 256), device='cpu'))
         self.lowest_loss = np.inf
         
         
@@ -39,9 +40,8 @@ class Run():
         self.model.to(device)
         self.optimizer.load_state_dict(data['optimizer_state_dict'])
         global_step = data['step']
-        total_epochs = self.run_info['nr_epochs']
-        self.run_info.update({'nr_epochs':total_epochs - global_step//len(self.train_dataloader)})
-        print(f"Restored model at step {run_info['nr_epochs']}.")
+        self.curent_epoch = global_step//len(self.train_dataloader)
+        print(f"Restored model at step {self.curent_epoch}.")
         return
 
     def save_checkpoint(self,global_step,type='last'):
@@ -60,7 +60,7 @@ class Run():
 
 
     def train(self):
-        for epoch in range(self.run_info['nr_epochs']):
+        for epoch in range(self.curent_epoch,self.run_info['nr_epochs']):
             epoch_stat = {"EMA": {}}
             for count,batch_data in tqdm.tqdm(enumerate(self.train_dataloader)):
                 step_stat = train_step(batch_data,self.model,self.optimizer,self.lr_scheduler,self.run_info["loss"])
@@ -81,13 +81,11 @@ class Run():
                 wandb.log({val_image_name:wandb.Image(val_image)})
         return
 
+def main(run_info):
+  trainer = Run(run_info)
+  trainer.train()
+
+
 if __name__ == "__main__":
     wandb.init(project="ISBI_Hover",name='hover_log')
-    trainer = Run(run_info)
-    trainer.train
-
-
-
-
-
-
+    main(run_info)
