@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from losses import cross_entropy_loss,dice_loss,mse_loss,msge_loss
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-def train_step(batch_data,model,optimizer, loss_opts):
+def train_step(batch_data,model,optimizer,lr_scheduler, loss_opts):
     # TODO: synchronize the attach protocol
     # run_info, state_info = run_info
     loss_func_dict = {
@@ -80,6 +80,7 @@ def train_step(batch_data,model,optimizer, loss_opts):
     # torch.set_printoptions(precision=10)
     loss.backward()
     optimizer.step()
+    lr_scheduler.step()
     ####
 
     # # pick 2 random sample from the batch for visualization
