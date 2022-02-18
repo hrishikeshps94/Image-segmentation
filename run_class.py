@@ -24,9 +24,9 @@ class Run():
         
 
     def load_dataset(self):
-        self.train_dataloader = TrainManager(self.run_info)._get_datagen()
+        self.train_dataloader = TrainManager(self.run_info)._get_datagen(nr_procs=os.cpu_count())
         self.run_info.update({'mode':'valid'})
-        self.val_dataloader = TrainManager(self.run_info)._get_datagen()
+        self.val_dataloader = TrainManager(self.run_info)._get_datagen(nr_procs=os.cpu_count())
         return
 
 
