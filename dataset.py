@@ -31,7 +31,7 @@ class TrainManager():
         self.run_info = run_info
         self.train_dir_list = self.run_info['dir_path']['train']
         self.valid_dir_list = self.run_info['dir_path']['valid']
-        self.debug = True
+        self.debug = False
         self.type_classification = True
         self.shape_info = self.run_info['shape_info']
         ##Be cautious about this edit
@@ -62,8 +62,9 @@ class TrainManager():
 
     ####
     # def _get_datagen(self, batch_size, run_mode, target_gen, nr_procs=os.cpu_count):
-    def _get_datagen(self, nr_procs=os.cpu_count):
+    def _get_datagen(self, nr_procs=os.cpu_count()):
         nr_procs = nr_procs if not self.debug else 0
+        print(f'Number of workers = {nr_procs},Debug mode is {self.debug}')
 
         # ! Hard assumption on file type
         file_list = []
