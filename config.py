@@ -15,8 +15,8 @@ run_info['nr_epochs'] = 1000
 run_info['batch_size'] = {"train": 4, "valid": 4,}
 run_info['nr_class'] = nr_class
 run_info['net'] = lambda: create_model(input_ch=3, nr_types=nr_class)
-run_info['dir_path'] = {'train':['/content/train'],\
-'valid':['/content/val']}
+run_info['dir_path'] = {'train':['/path to /train'],\
+'valid':['/path to /val']}
 run_info['optimizer'] = optim.Adam
 run_info['lr_scheduler'] = lambda x: CosineAnnealingLR(x,(4900//run_info['batch_size']['train'])*run_info['nr_epochs'])
 run_info['loss'] = {"np": {"bce": 1, "dice": 1},"hv": {"mse": 1, "msge": 1},"tp": {"bce": 1, "dice": 1},}
@@ -25,4 +25,5 @@ run_info['shape_info'] = {
     "train": {"input_shape": act_shape, "mask_shape": out_shape,},
     "valid": {"input_shape": act_shape, "mask_shape": out_shape,},
 }
+
 
